@@ -26,16 +26,20 @@ class Game extends React.Component {
             tempBoard.push(tempRow);
         }
         this.setState({board: tempBoard});
-        // this.setState({
-        //     board: tempBoard,
-        //     turn: "playerOne",
-        //     playerOne: {...this.state.playerOne, token: 0},
-        //     playerTwo: {...this.state.playerTwo, token: 0}
-        // });
+    }
+    changeColor = (event, player) => {
+        const currentPlayer = (player === 'playerOne' ? this.state.playerOne : this.state.playerTwo);
+        const otherPlayer = (player === 'playerOne' ? this.state.playerTwo : this.state.playerOne);
+        console.log(currentPlayer)
+        if (event.target.value !== otherPlayer.color || otherPlayer.color === '') {
+            currentPlayer.color = event.target.value;
+            player === 'playerOne' ? this.setState({playerOne: currentPlayer}) : this.setState({playerTwo: currentPlayer});
+        } else {
+            alert("This color is taken.")
+        }
     }
 
     checkWinner = (board) => {
-        // Check horizontally
         for (let i = 0; i < this.state.row; i++) {
             for (let j = 0; j <= this.state.col - 4; j++) {
                 if (board[i][j].color !== 'white' && board[i][j].color === board[i][j + 1].color && board[i][j].color === board[i][j + 2].color && board[i][j].color === board[i][j + 3].color) {
@@ -43,7 +47,6 @@ class Game extends React.Component {
                 }
             }
         }
-        // Check vertically
         for (let i = 0; i <= this.state.row - 4; i++) {
             for (let j = 0; j < this.state.col; j++) {
                 if (board[i][j].color !== 'white' && board[i][j].color === board[i + 1][j].color && board[i][j].color === board[i + 2][j].color && board[i][j].color === board[i + 3][j].color) {
@@ -51,7 +54,6 @@ class Game extends React.Component {
                 }
             }
         }
-        // Check diagonally
         for (let i = 0; i <= this.state.row - 4; i++) {
             for (let j = 0; j <= this.state.col - 4; j++) {
                 if (board[i][j].color !== 'white' && board[i][j].color === board[i + 1][j + 1].color && board[i][j].color === board[i + 2][j + 2].color && board[i][j].color === board[i + 3][j + 3].color) {
@@ -114,18 +116,6 @@ class Game extends React.Component {
         const currentPlayer = (player === 'playerOne' ? this.state.playerOne : this.state.playerTwo);
         currentPlayer[type] = userChoice;
         player === 'playerOne' ? this.setState({playerOne: currentPlayer}) : this.setState({playerTwo: currentPlayer});
-    }
-
-    changeColor = (event, player) => {
-        const currentPlayer = (player === 'playerOne' ? this.state.playerOne : this.state.playerTwo);
-        const otherPlayer = (player === 'playerOne' ? this.state.playerTwo : this.state.playerOne);
-        console.log(currentPlayer)
-        if (event.target.value !== otherPlayer.color || otherPlayer.color === '') {
-            currentPlayer.color = event.target.value;
-            player === 'playerOne' ? this.setState({playerOne: currentPlayer}) : this.setState({playerTwo: currentPlayer});
-        } else {
-            alert("This color is taken.")
-        }
     }
 
     setSize = (event, type) => {
