@@ -120,7 +120,11 @@ class Game extends React.Component {
 
     setSize = (event, type) => {
         const size = event.target.value;
-        type === 'row' ? this.setState({row: size}) : this.setState({col: size});
+        if(size >= 5 && size <= 10) {
+            type === 'row' ? this.setState({row: size}) : this.setState({col: size});
+        } else{
+            alert("Please enter a number between 5-10");
+        }
     }
 
     startGame = () => {
