@@ -4,7 +4,6 @@ import Player from "./Player";
 import './App.css';
 
 class Game extends React.Component {
-
     state = {
         board: [],
         row: 5,
@@ -13,7 +12,9 @@ class Game extends React.Component {
         playerOne: {name: "", color: "", score: 0, text: "playerOne", token: 0},
         playerTwo: {name: "", color: "", score: 0, text: "playerTwo", token: 0},
         turn: "playerOne",
-        gameStarted: false
+        gameStarted: false,
+        playerOneToken: 0,
+        playerTwoToken: 0,
     }
 
     createBoard = () => {
@@ -25,19 +26,9 @@ class Game extends React.Component {
             }
             tempBoard.push(tempRow);
         }
-        this.setState({board: tempBoard});
+        this.setState({board: tempBoard, playerOneToken: 0, playerTwoToken: 0});
     }
-    changeColor = (event, player) => {
-        const currentPlayer = (player === 'playerOne' ? this.state.playerOne : this.state.playerTwo);
-        const otherPlayer = (player === 'playerOne' ? this.state.playerTwo : this.state.playerOne);
-        console.log(currentPlayer)
-        if (event.target.value !== otherPlayer.color || otherPlayer.color === '') {
-            currentPlayer.color = event.target.value;
-            player === 'playerOne' ? this.setState({playerOne: currentPlayer}) : this.setState({playerTwo: currentPlayer});
-        } else {
-            alert("This color is taken.")
-        }
-    }
+
 
     checkWinner = (board) => {
         for (let i = 0; i < this.state.row; i++) {
@@ -66,8 +57,19 @@ class Game extends React.Component {
         }
         return null;
     }
+    gameOver = () => {
+        const currentBoard = this.state.board;
+        let gameIsOver = true;
+        for (let i = 0; i < this.state.col; i++) {
+            if (currentBoard[0][i].color === 'white') {
+                gameIsOver = false;
+                break;
+            }
+        }
+        return gameIsOver;
+    }
 
-    clicked = (col) => {
+    userClick = (col) => {
         let winner = null;
         let tempBoard = this.state.board;
         const player = this.state.turn === 'playerOne' ? this.state.playerOne : this.state.playerTwo;
@@ -84,8 +86,9 @@ class Game extends React.Component {
         if (!painted) {
             alert("Column is full")
         } else {
-            let currentToken = player.token + 1;
-            player.token = currentToken;
+            console.log(this.state.playerOneToken + "player one token")
+            console.log(this.state.playerTwoToken + "player two token")
+            player.text === 'playerOne' ? this.setState({playerOneToken: this.state.playerOneToken + 1}) : this.setState({playerTwoToken: this.state.playerTwoToken + 1});
             this.state.turn === "playerOne" ? this.setState({
                 turn: 'playerTwo',
                 playerOne: player
@@ -96,22 +99,50 @@ class Game extends React.Component {
                     const winningPlayer = winner === this.state.playerOne.color ? 'playerOne' : 'playerTwo';
                     const updatedScore = this.state[winningPlayer].score + 1;
                     this.setState({
-                        [winningPlayer]: {...this.state[winningPlayer], score: updatedScore}
-                    });
+                            [winningPlayer]: {...this.state[winningPlayer], score: updatedScore},
+
+                        }
+                    );
                     setTimeout(() => {
                         alert(`${this.state[winningPlayer].name} has won!`);
                         this.createBoard()
 
                     }, 200)
+                } else if (this.gameOver()) {
+                    setTimeout(() => {
+                        alert("Nobody won, game is over")
+                        this.createBoard();
+                    }, 200)
+
+                }
+                //update the tokens
+                if (this.gameOver() || winner) {
+                    const playerOne = this.state.playerOne;
+                    playerOne.token = this.state.playerOne.token + this.state.playerOneToken;
+                    const playerTwo = this.state.playerTwo;
+                    playerTwo.token = this.state.playerTwo.token + this.state.playerTwoToken;
+                    this.setState({
+                        playerOne: playerOne,
+                        playerTwo: playerTwo
+                    })
                 }
             })
 
         }
 
-
+    }
+    changeColor = (event, player) => {
+        const currentPlayer = (player === 'playerOne' ? this.state.playerOne : this.state.playerTwo);
+        const otherPlayer = (player === 'playerOne' ? this.state.playerTwo : this.state.playerOne);
+        if (event.target.value !== otherPlayer.color || otherPlayer.color === '') {
+            currentPlayer.color = event.target.value;
+            player === 'playerOne' ? this.setState({playerOne: currentPlayer}) : this.setState({playerTwo: currentPlayer});
+        } else {
+            alert("This color is taken.")
+        }
     }
 
-    change = (event, player, type) => {
+    changeName = (event, player, type) => {
         const userChoice = event.target.value;
         const currentPlayer = (player === 'playerOne' ? this.state.playerOne : this.state.playerTwo);
         currentPlayer[type] = userChoice;
@@ -120,9 +151,9 @@ class Game extends React.Component {
 
     setSize = (event, type) => {
         const size = event.target.value;
-        if(size >= 5 && size <= 10) {
+        if (size >= 5 && size <= 10) {
             type === 'row' ? this.setState({row: size}) : this.setState({col: size});
-        } else{
+        } else {
             alert("Please enter a number between 5-10");
         }
     }
@@ -145,8 +176,8 @@ class Game extends React.Component {
                     <Player
                         player={[this.state.playerOne, this.state.playerTwo]}
                         colorArray={this.state.playerColors}
-                        changeFunc={this.change}
-                        changeCol={this.changeColor}
+                        changeName={this.changeName}
+                        changeColor={this.changeColor}
                     />
                     <h3>Please choose column size between 4-10</h3>
                     <input type={'number'} value={this.state.col} min={5} max={10}
@@ -158,14 +189,14 @@ class Game extends React.Component {
                     <button onClick={this.startGame}><b>Start the game!</b></button>
                 </div>) : (<div className={"try"}>
                     <h2>{this.state.turn === 'playerOne' ? `${this.state.playerOne.name}'s turn` : `${this.state.playerTwo.name}'s turn`}</h2>
-                    <PaintBoard board={this.state.board} changeColor={this.clicked}/>
+                    <PaintBoard board={this.state.board} userClick={this.userClick}/>
 
-                    <h3 style={{color:this.state.playerOne.color}}>Player name: {this.state.playerOne.name}, Token: {this.state.playerOne.token},
+                    <h3 style={{color: this.state.playerOne.color}}>Player name: {this.state.playerOne.name},
+                        Token: {this.state.playerOne.token},
                         Score: {this.state.playerOne.score}</h3>
-                    <h3 style={{color:this.state.playerTwo.color}}>Player name: {this.state.playerTwo.name}, Token: {this.state.playerTwo.token},
+                    <h3 style={{color: this.state.playerTwo.color}}>Player name: {this.state.playerTwo.name},
+                        Token: {this.state.playerTwo.token},
                         Score: {this.state.playerTwo.score}</h3>
-
-
                     <button onClick={this.createBoard}><b>Reset</b></button>
                 </div>)}
             </div>

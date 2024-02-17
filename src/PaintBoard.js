@@ -10,7 +10,7 @@ function PaintBoard(props) {
                         {row.map((col)=>{
                            return(
                                <button style={{backgroundColor:col.color}}
-                                       onClick={()=>props.changeColor(col.col)}
+                                       onClick={()=>props.userClick(col.col)}
                                        className={"myButtons"}></button>
                            )
                         })}
