@@ -57,7 +57,7 @@ class Game extends React.Component {
         }
         return null;
     }
-    gameOver = () => {
+    BoardIsFull = () => {
         const currentBoard = this.state.board;
         let gameIsOver = true;
         for (let i = 0; i < this.state.col; i++) {
@@ -98,17 +98,16 @@ class Game extends React.Component {
                 if (winner) {
                     const winningPlayer = winner === this.state.playerOne.color ? 'playerOne' : 'playerTwo';
                     const updatedScore = this.state[winningPlayer].score + 1;
-                    this.setState({
-                            [winningPlayer]: {...this.state[winningPlayer], score: updatedScore},
+                    const winnerState=winningPlayer==='playerOne'? this.state.playerOne: this.state.playerTwo
+                    winnerState.score=updatedScore;
+                    winningPlayer==='playerOne'? this.setState({playerOne:winnerState}): this.setState({playerTwo:winnerState});
 
-                        }
-                    );
                     setTimeout(() => {
                         alert(`${this.state[winningPlayer].name} has won!`);
                         this.createBoard()
 
                     }, 200)
-                } else if (this.gameOver()) {
+                } else if (this.BoardIsFull()) {
                     setTimeout(() => {
                         alert("Nobody won, game is over")
                         this.createBoard();
@@ -116,7 +115,7 @@ class Game extends React.Component {
 
                 }
                 //update the tokens
-                if (this.gameOver() || winner) {
+                if (this.BoardIsFull() || winner) {
                     const playerOne = this.state.playerOne;
                     playerOne.token = this.state.playerOne.token + this.state.playerOneToken;
                     const playerTwo = this.state.playerTwo;
@@ -182,7 +181,7 @@ class Game extends React.Component {
                     <h3>Please choose column size between 4-10</h3>
                     <input type={'number'} value={this.state.col} min={5} max={10}
                            onChange={(event) => this.setSize(event, "col")}/>
-                    <h3>Please choose row size between 4-10</h3>
+                    <h3>Please choose row size between 5-10</h3>
                     <input type={'number'} value={this.state.row} min={5} max={10}
                            onChange={(event) => this.setSize(event, "row")}/>
                     <br/>
