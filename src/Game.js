@@ -178,7 +178,7 @@ class Game extends React.Component {
                         changeName={this.changeName}
                         changeColor={this.changeColor}
                     />
-                    <h3>Please choose column size between 4-10</h3>
+                    <h3>Please choose column size between 5-10</h3>
                     <input type={'number'} value={this.state.col} min={5} max={10}
                            onChange={(event) => this.setSize(event, "col")}/>
                     <h3>Please choose row size between 5-10</h3>
