@@ -6,6 +6,7 @@ button {
   margin-top: 15px;
   width: 100px;
   height: 40px;
+  border-radius: 50px;
   background-color: dimgray;
   color: white;
 }
