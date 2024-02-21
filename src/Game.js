@@ -1,6 +1,7 @@
 import React from 'react';
 import PaintBoard from "./PaintBoard";
 import Player from "./Player";
+import logo from './img.png';
 import './App.css';
 
 class Game extends React.Component {
@@ -169,6 +170,7 @@ class Game extends React.Component {
 
     render() {
         return (<div className={'game'}>
+                <img src={logo} className="Image" alt="Logo" />
                 <div className={'title'}></div>
                 <h1 id={'mainTitle'}>Welcome to connect four game!</h1>
                 {this.state.gameStarted === false ? (<div className={"try"}>
@@ -189,7 +191,6 @@ class Game extends React.Component {
                 </div>) : (<div className={"try"}>
                     <h2>{this.state.turn === 'playerOne' ? `${this.state.playerOne.name}'s turn` : `${this.state.playerTwo.name}'s turn`}</h2>
                     <PaintBoard board={this.state.board} userClick={this.userClick}/>
-
                     <h3 style={{color: this.state.playerOne.color}}>Player name: {this.state.playerOne.name},
                         Token: {this.state.playerOne.token},
                         Score: {this.state.playerOne.score}</h3>
